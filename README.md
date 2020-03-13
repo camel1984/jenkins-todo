@@ -10,6 +10,8 @@ http://127.0.0.1:9000 to access sonar webpage.
 
 gradle repository:sonarqube
 
+jenkins:
+wangshuaijie/123456
 
 this verison only works with gradle 5.1:
 
