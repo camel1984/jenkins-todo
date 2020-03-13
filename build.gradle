@@ -1,0 +1,9 @@
+allprojects {
+    group = 'com.manning.gia'
+    version = '0.1'
+}
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'jacoco'
+}

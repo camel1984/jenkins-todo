@@ -1,0 +1,107 @@
+plugins {
+    id "org.sonarqube" version "2.8"
+}
+apply from: 'databaseSetup.gradle'
+
+repositories {
+    maven {
+        url "https://repo1.maven.org/maven2/"
+    }
+
+    maven {
+        url "https://repo.spring.io/plugins-release/"
+    }
+}
+
+dependencies {
+    compile project(':model')
+    runtime 'com.h2database:h2:1.3.170'
+    testCompile 'junit:junit:4.11'
+}
+
+sourceSets {
+    integrationTest {
+        java.srcDir file('src/integTest/java')
+        resources.srcDir file('src/integTest/resources')
+        compileClasspath = sourceSets.main.output + configurations.testRuntime
+        runtimeClasspath = output + compileClasspath
+    }
+}
+
+task integrationTest(type: Test) {
+    description = 'Runs the integration tests.'
+    group = 'verification'
+    testClassesDirs = sourceSets.integrationTest.output.classesDirs
+    classpath = sourceSets.integrationTest.runtimeClasspath
+    dependsOn startAndPrepareDatabase
+}
+
+tasks.withType(Test) {
+    testLogging {
+        showStandardStreams = true
+        exceptionFormat 'full'
+    }
+}
+
+
+
+jacocoTestReport {
+    reports {
+        xml.enabled true
+    }
+}
+
+
+task integrationTestReport (type: JacocoReport) {
+
+    executionData project.tasks.integrationTest
+    def reportDir = project.reporting.file("jacoco/integrationTest/html")
+
+    sourceDirectories = project.files(project.sourceSets.main.allSource.srcDirs)
+    classDirectories = project.sourceSets.main.output
+
+    reports {
+        xml.enabled true
+        xml.destination = project.reporting.file("jacoco/integrationTest/integrationTest.xml")
+        html.destination = reportDir
+    }
+    doLast {
+        println "See report at: file://${reportDir.toURI().path}index.html"
+    }
+}
+
+task allTestReport (type: JacocoReport) {
+
+    executionData project.tasks.integrationTest, project.tasks.test
+    def reportDir = project.reporting.file("jacoco/all/html")
+
+    sourceDirectories = project.files(project.sourceSets.main.allSource.srcDirs)
+    classDirectories = project.sourceSets.main.output
+
+    reports {
+        xml.enabled true
+        xml.destination = project.reporting.file("jacoco/all/allTest.xml")
+        html.destination = reportDir
+    }
+    doLast {
+        println "See report at: file://${reportDir.toURI().path}index.html"
+    }
+}
+allTestReport.dependsOn integrationTestReport
+
+integrationTestReport.dependsOn integrationTest
+
+integrationTest.dependsOn jacocoTestReport
+
+jacocoTestReport.dependsOn test
+
+check.dependsOn allTestReport
+
+
+sonarqube {
+    properties {
+        property "sonar.sourceEncoding", "UTF-8"
+        property 'sonar.coverage.jacoco.xmlReportPaths', project.reporting.file("jacoco/all/allTest.xml")
+        property "sonar.projectName", "jenkins-todo-repository"
+    }
+}
