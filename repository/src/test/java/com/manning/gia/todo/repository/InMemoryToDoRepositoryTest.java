@@ -23,7 +23,7 @@ public class InMemoryToDoRepositoryTest {
         inMemoryToDoRepository.insert(toDoItem);
         List<ToDoItem> toDoItems = inMemoryToDoRepository.findAll();
 
-        assertEquals(2, toDoItems.size());
+        assertEquals(1, toDoItems.size());
         assertEquals(toDoItem, toDoItems.get(0));
     }
 
