@@ -21,4 +21,8 @@ class ProjectVersion {
 
         fullVersion
     }
+
+    String toVCSTag(){
+        "$major.$minor"
+    }
 }

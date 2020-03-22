@@ -2,6 +2,9 @@
 # command
 gradle web:jettyRun
 
+gradle bintrayUpload -PbintrayUser=wangshuaijie -PbintrayApiKey=apiKey
+
+
 start sonar servier:
 
 /Users/shuaijie/server/sonarqube-7.8/bin/macosx-universal-64/sonar.sh start

@@ -1,3 +1,12 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+}
+
+plugins {
+    id "com.jfrog.bintray" version "1.8.4"
+}
 plugins {
     id "org.gretty" version "2.2.0"
 }
@@ -20,7 +29,22 @@ dependencies {
     runtime 'javax.servlet:jstl:1.2'
 }
 
+task sourcesJar(type: Jar) {
+    baseName 'todo'
+    classifier 'sources'
+    from sourceSets.main.allSource
+}
 
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    baseName 'todo'
+    classifier 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}
 
 task createBuildInfoFile {
     doLast {
@@ -39,5 +63,61 @@ war {
     from(buildDir) {
         include 'build-info.properties'
         into('WEB-INF/classes')
+    }
+}
+
+apply plugin: 'maven-publish'
+
+publishing {
+    publications {
+        toDoWebApp(MavenPublication) {
+            from components.web
+
+            groupId 'org.camel.test'
+            artifactId 'todo-web'
+            version project.version.toString()
+            artifact sourcesJar
+            artifact javadocJar
+
+            pom.withXml {
+                def root = asNode()
+                root.appendNode('name', 'todo web application')
+                root.appendNode('description', 'todo application')
+                root.appendNode('inceptionYear', '2020')
+
+                def license = root.appendNode('licenses').appendNode('license')
+                license.appendNode('name', 'The Apache Software License, Version 2.0')
+                license.appendNode('url', 'http://www.apache.org/licenses/LICENSE-2.0.txt')
+                license.appendNode('distribution', 'repo')
+
+                def developer = root.appendNode('developers').appendNode('developer')
+                developer.appendNode('id', 'camel')
+                developer.appendNode('name', 'wangshuaijie')
+                developer.appendNode('email', 'bobwa1984@gmail.com')
+            }
+
+
+        }
+    }
+}
+
+bintray {
+    user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
+    key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_API_KEY')
+    publications = ['toDoWebApp']
+
+    pkg {
+        repo = 'test'
+        name = 'todo-web'
+        userOrg = 'wsjorg'
+        licenses = ['Apache-2.0']
+        vcsUrl = 'https://github.com/camel1984/jenkins-todo.git'
+        version {
+            name = project.version.toString()
+            desc = 'todo web application'
+            released  = new Date()
+            vcsTag = project.version.toVCSTag()
+            attributes = ['gradle-plugin': 'com.use.less:com.use.less.gradle:gradle-useless-plugin']
+        }
     }
 }
