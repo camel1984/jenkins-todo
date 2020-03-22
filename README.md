@@ -13,6 +13,8 @@ gradle repository:sonarqube
 jenkins:
 wangshuaijie/123456
 
+export SOURCE_BUILD_NUMBER=100
+
 this verison only works with gradle 5.1:
 
 
