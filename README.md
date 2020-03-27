@@ -18,12 +18,14 @@ wangshuaijie/123456
 
 export SOURCE_BUILD_NUMBER=100
 
-gradle web:functionalTest
+gradle web:localFunctionalTest
 
 
 gradle build -Penv=test
 
 gradle -Penv=test web:smokeTests
+
+gradle -Penv=test web:remoteFunctionalTest
 
 this verison only works with gradle 5.1:
 

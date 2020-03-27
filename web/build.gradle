@@ -22,7 +22,7 @@ apply from: "$rootDir/gradle/sshDeploy.gradle"
 apply from: "$rootDir/gradle/smokeTest.gradle"
 
 gretty {
-    integrationTestTask = 'functionalTest'
+    integrationTestTask = 'localFunctionalTest'
     contextPath = 'todo'
     httpPort = 8081
 }
@@ -66,16 +66,35 @@ sourceSets {
     }
 }
 
-task functionalTest(type: Test) {
+task localFunctionalTest(type: Test) {
     testClassesDirs = sourceSets.functionalTest.output.classesDirs
     classpath = sourceSets.functionalTest.runtimeClasspath
     reports.html.destination = file("$reports.html.destination/functional")
     reports.junitXml.destination = file("$reports.junitXml.destination/functional")
     systemProperty 'geb.env', 'firefox'
     systemProperty 'geb.build.reportsDir', reporting.file("$name/geb")
+    systemProperty 'geb.build.baseUrl', "http://127.0.0.1:8081/todo"
+
 }
 
-check.dependsOn functionalTest
+check.dependsOn localFunctionalTest
+
+ext {
+    remoteFunctionalTestReportDir = file("$test.reports.html.destination/remoteFunctional")
+    remoteFunctionalTestResultsDir = file("$test.reports.junitXml.destination/remoteFunctional")
+    remoteFunctionalCommonSystemProperties = ['geb.env': 'firefox', 'geb.build.reportsDir': reporting.file("$name/remotegeb")]
+}
+
+
+
+task remoteFunctionalTest(type: Test) {
+    testClassesDirs = sourceSets.functionalTest.output.classesDirs
+    classpath = sourceSets.functionalTest.runtimeClasspath
+    reports.html.destination = remoteFunctionalTestReportDir
+    reports.junitXml.destination = remoteFunctionalTestResultsDir
+    systemProperties remoteFunctionalCommonSystemProperties
+    systemProperty 'geb.build.baseUrl', "http://$config.tomcat.hostname:$config.tomcat.port/$config.tomcat.context/"
+}
 
 
 task sourcesJar(type: Jar) {
