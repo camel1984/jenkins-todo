@@ -1,0 +1,13 @@
+repositories {
+    maven {
+        url "https://repo1.maven.org/maven2/"
+    }
+
+    maven {
+        url "https://repo.spring.io/plugins-release/"
+    }
+}
+
+dependencies {
+    compile 'org.codehaus.groovy.modules.http-builder:http-builder:0.7.1'
+}

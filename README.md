@@ -23,6 +23,8 @@ gradle web:functionalTest
 
 gradle build -Penv=test
 
+gradle -Penv=test web:smokeTests
+
 this verison only works with gradle 5.1:
 
 

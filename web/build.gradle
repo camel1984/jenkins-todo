@@ -11,10 +11,15 @@ plugins {
     id "org.gretty" version "2.2.0"
 //    id "org.akhikhl.gretty" version "2.0.0"
 }
+configurations.all {
+    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+}
+
 apply plugin: 'groovy'
 apply plugin: 'war'
 
 apply from: "$rootDir/gradle/sshDeploy.gradle"
+apply from: "$rootDir/gradle/smokeTest.gradle"
 
 gretty {
     integrationTestTask = 'functionalTest'
