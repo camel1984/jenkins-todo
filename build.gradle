@@ -1,5 +1,5 @@
 allprojects {
-    group = 'com.manning.gia'
+    group = 'org.camel.test'
     apply from: "$rootDir/gradle/versioning.gradle"
 }
 
@@ -15,4 +15,15 @@ subprojects {
             url "https://repo.spring.io/plugins-release/"
         }
     }
+}
+
+
+def env = project.hasProperty('env') ? project.getProperty('env') : 'local'
+logger.quiet "Loading configuration for environment '$env'."
+
+def configFile = file("$rootDir/gradle/config/buildConfig.groovy")
+def parsedConfig = new ConfigSlurper(env).parse(configFile.toURL())
+
+allprojects {
+    ext.config = parsedConfig
 }

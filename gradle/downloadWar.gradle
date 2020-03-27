@@ -1,0 +1,20 @@
+repositories {
+    jcenter()
+}
+
+
+configurations {
+    mydownload
+}
+
+dependencies {
+//    todo group: 'org.camel.test', name: 'todo-web', version: '1.0', ext: 'war'
+    mydownload group: project.group, name: 'todo-web', version: project.version.toString(), ext: 'war'
+}
+
+ext.downloadDir = file("$buildDir/download/artifacts")
+
+task fetchToDoWar(type: Copy) {
+    from configurations.mydownload
+    into downloadDir
+}

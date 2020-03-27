@@ -20,6 +20,9 @@ export SOURCE_BUILD_NUMBER=100
 
 gradle web:functionalTest
 
+
+gradle build -Penv=test
+
 this verison only works with gradle 5.1:
 
 
