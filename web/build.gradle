@@ -96,6 +96,7 @@ task remoteFunctionalTest(type: Test) {
     systemProperty 'geb.build.baseUrl', "http://$config.tomcat.hostname:$config.tomcat.port/$config.tomcat.context/"
 }
 
+remoteFunctionalTest.dependsOn smokeTests
 
 task sourcesJar(type: Jar) {
     baseName 'todo'
