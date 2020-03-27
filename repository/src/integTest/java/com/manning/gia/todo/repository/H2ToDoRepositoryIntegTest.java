@@ -19,7 +19,7 @@ public class H2ToDoRepositoryIntegTest {
     @Test
     public void testInsertToDoItem() {
         ToDoItem newToDoItem = new ToDoItem();
-        newToDoItem.setName("Write integration tests");
+        newToDoItem.setName("local integration test");
         Long newId = h2ToDoRepository.insert(newToDoItem);
         newToDoItem.setId(newId);
         assertNotNull(newId);
@@ -27,5 +27,6 @@ public class H2ToDoRepositoryIntegTest {
         ToDoItem persistedToDoItem = h2ToDoRepository.findById(newId);
         assertNotNull(persistedToDoItem);
         assertEquals(newToDoItem, persistedToDoItem);
+        h2ToDoRepository.delete(persistedToDoItem);
     }
 }
