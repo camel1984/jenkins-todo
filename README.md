@@ -32,6 +32,7 @@ this verison only works with gradle 5.1:
 
 Following is a list of change to trigger build:
 trigger 0000
+trigger 0001
 
 ------------------------------------------------------------
 Gradle 5.1
