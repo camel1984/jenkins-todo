@@ -30,6 +30,9 @@ gradle -Penv=test web:remoteFunctionalTest
 this verison only works with gradle 5.1:
 
 
+Following is a list of change to trigger build:
+trigger 0
+
 ------------------------------------------------------------
 Gradle 5.1
 ------------------------------------------------------------
