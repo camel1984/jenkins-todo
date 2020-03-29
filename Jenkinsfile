@@ -7,7 +7,7 @@ pipeline {
     options {
             timeout(time: 1, unit: 'HOURS')
             buildDiscarder(logRotator(numToKeepStr: '100'))
-            quietPeriod(10)
+            quietPeriod(4)
     }
     stages {
         stage('todo-initial') {
@@ -21,14 +21,14 @@ pipeline {
                         branches: ['*/master']
                      ]]
                  ])
-                 sh './gradlew clean'
-                 sh './gradlew test'
+                 sh './gradlew --no-daemon clean'
+                 sh './gradlew --no-daemon test'
             }
         }
 
          stage('todo-integ-tests') {
              steps {
-                sh './gradlew repository:integrationTest'
+                sh './gradlew --no-daemon repository:integrationTest'
                 step([
                     $class: 'JUnitResultArchiver',
                     testResults: '**/build/test-results/integrationTest/*Test.xml',
@@ -69,30 +69,30 @@ pipeline {
 
          stage('todo-code-quality') {
             steps {
-                sh './gradlew repository:sonarqube'
+                sh './gradlew --no-daemon repository:sonarqube'
             }
          }
          stage('todo-local-functional-test') {
             steps {
-                sh './gradlew web:localFunctionalTest'
+                sh './gradlew --no-daemon web:localFunctionalTest'
             }
          }
          stage('todo-distribution') {
             steps {
-                sh './gradlew bintrayUpload'
+                sh './gradlew --no-daemon bintrayUpload'
             }
          }
          stage('todo-acceptance-deploy') {
              steps {
                input(message: "Procced to deployment?")
-               sh './gradlew deployWar -Penv=test'
+               sh './gradlew --no-daemon deployWar -Penv=test'
              }
          }
         stage('todo-acceptance-test') {
              steps {
                input(message: "Procced to accept test?")
-                sh './gradlew smokeTests -Penv=test'
-                sh './gradlew remoteFunctionalTest -Penv=test'
+                sh './gradlew --no-daemon smokeTests -Penv=test'
+                sh './gradlew --no-daemon remoteFunctionalTest -Penv=test'
              }
          }
     }
