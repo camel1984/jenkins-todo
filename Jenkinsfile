@@ -1,5 +1,8 @@
 pipeline {
     agent any
+    environment {
+         SOURCE_BUILD_NUMBER = "${BUILD_NUMBER}"
+    }
     triggers { pollSCM('* * * * *') }
     options {
             timeout(time: 1, unit: 'HOURS')
@@ -80,6 +83,7 @@ pipeline {
          }
          stage('todo-acceptance-deploy') {
              steps {
+                input(message: "Please approve the build.")
                 sh './gradlew deployWar -Penv=test'
              }
          }
