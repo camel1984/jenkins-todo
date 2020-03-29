@@ -7,6 +7,7 @@ pipeline {
     options {
             timeout(time: 1, unit: 'HOURS')
             buildDiscarder(logRotator(numToKeepStr: '100'))
+            quietPeriod(10)
     }
     stages {
         stage('todo-initial') {
@@ -83,12 +84,13 @@ pipeline {
          }
          stage('todo-acceptance-deploy') {
              steps {
-                input(message: "Please approve the build.")
-                sh './gradlew deployWar -Penv=test'
+               input(message: "Procced to deployment?")
+               sh './gradlew deployWar -Penv=test'
              }
          }
         stage('todo-acceptance-test') {
              steps {
+               input(message: "Procced to accept test?")
                 sh './gradlew smokeTests -Penv=test'
                 sh './gradlew remoteFunctionalTest -Penv=test'
              }
