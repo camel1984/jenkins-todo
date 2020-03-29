@@ -61,6 +61,33 @@ pipeline {
                     buildOverBuild : false
                 )
              }
-          }
+         }
+
+         stage('todo-code-quality') {
+            steps {
+                sh './gradlew repository:sonarqube'
+            }
+         }
+         stage('todo-local-functional-test') {
+            steps {
+                sh './gradlew web:localFunctionalTest'
+            }
+         }
+         stage('todo-distribution') {
+            steps {
+                sh './gradlew bintrayUpload'
+            }
+         }
+         stage('todo-acceptance-deploy') {
+             steps {
+                sh './gradlew deployWar -Penv=test'
+             }
+         }
+        stage('todo-acceptance-test') {
+             steps {
+                sh './gradlew smokeTests -Penv=test'
+                sh './gradlew remoteFunctionalTest -Penv=test'
+             }
+         }
     }
 }
